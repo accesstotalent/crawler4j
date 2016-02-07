@@ -20,11 +20,11 @@
 		<developerConnection>scm:git:git@github.com:yasserg/crawler4j.git</developerConnection>
 	</scm>
 
-	<parent>
-		<groupId>org.sonatype.oss</groupId>
-		<artifactId>oss-parent</artifactId>
-		<version>7</version>
-	</parent>
+	<!--<parent>-->
+		<!--<groupId>a2t</groupId>-->
+		<!--<artifactId>crawler</artifactId>-->
+		<!--<version>1.0-SNAPSHOT</version>-->
+	<!--</parent>-->
 
 	<build>
 		<plugins>
