@@ -2,6 +2,7 @@ target/
 .DS_STORE
 .idea/*
 *.iml
+!.idea/runConfigurations/
 .settings/*
 javadocs/*
 .classpath
