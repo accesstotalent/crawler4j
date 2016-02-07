@@ -338,13 +338,6 @@ public class WebCrawler implements Runnable
                 throw new Exception("Failed processing a NULL url !?");
             }
 
-            // GJ:
-            int maxPagesToFetch = frontier.config.getMaxPagesToFetch();
-            if ((maxPagesToFetch > 0) && ((frontier.getScheduledPages()) >= maxPagesToFetch)) {
-                logger.debug("{} + 1 > {}, returning", frontier.getScheduledPages(), maxPagesToFetch);
-                return;
-            }
-
             fetchResult = pageFetcher.fetchPage(curURL);
             int statusCode = fetchResult.getStatusCode();
             handlePageStatusCode(curURL, statusCode, EnglishReasonPhraseCatalog.INSTANCE
@@ -429,6 +422,7 @@ public class WebCrawler implements Runnable
                         webURL.setDepth((short) (curURL.getDepth() + 1));
 
                         // GJ:
+                        int maxPagesToFetch = frontier.config.getMaxPagesToFetch();
                         boolean wouldGoOverMaxPages = ((maxPagesToFetch > 0)
                                 && ((frontier.getScheduledPages() + toSchedule.size()) >= maxPagesToFetch));
 

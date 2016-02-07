@@ -17,16 +17,8 @@
 
 package edu.uci.ics.crawler4j.crawler;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
-
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.frontier.DocIDServer;
 import edu.uci.ics.crawler4j.frontier.Frontier;
@@ -35,7 +27,6 @@ import edu.uci.ics.crawler4j.url.TLDList;
 import edu.uci.ics.crawler4j.url.URLCanonicalizer;
 import edu.uci.ics.crawler4j.url.WebURL;
 import edu.uci.ics.crawler4j.util.IO;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +43,7 @@ import java.util.List;
 public class CrawlController extends Configurable {
 
   static final Logger logger = LoggerFactory.getLogger(CrawlController.class);
+  public static final int SLEEP_TIME = 1; // GJ: Set this to 1 second instead of the original 10
 
   /**
    * The 'customData' object can be used for passing custom crawl-related
@@ -227,7 +219,7 @@ public class CrawlController extends Configurable {
         thread.start();
         crawlers.add(crawler);
         threads.add(thread);
-        logger.info("Crawler {} started", i);
+        logger.debug("Crawler {} started", i);
       }
 
       final CrawlController controller = this;
@@ -240,13 +232,13 @@ public class CrawlController extends Configurable {
             synchronized (waitingLock) {
 
               while (true) {
-                sleep(10);
+                sleep(SLEEP_TIME);
                 boolean someoneIsWorking = false;
                 for (int i = 0; i < threads.size(); i++) {
                   Thread thread = threads.get(i);
                   if (!thread.isAlive()) {
                     if (!shuttingDown) {
-                      logger.info("Thread {} was dead, I'll recreate it", i);
+                      logger.warn("Thread {} was dead, I'll recreate it", i);
                       T crawler = crawlerFactory.newInstance();
                       thread = new Thread(crawler, "Crawler " + (i + 1));
                       threads.remove(i);
@@ -266,8 +258,8 @@ public class CrawlController extends Configurable {
                   // Make sure again that none of the threads
                   // are
                   // alive.
-                  logger.info("It looks like no thread is working, waiting for 10 seconds to make sure...");
-                  sleep(10);
+                  logger.debug("It looks like no thread is working, waiting for {} seconds to make sure...", SLEEP_TIME);
+                  sleep(SLEEP_TIME);
 
                   someoneIsWorking = false;
                   for (int i = 0; i < threads.size(); i++) {
@@ -282,10 +274,10 @@ public class CrawlController extends Configurable {
                       if (queueLength > 0) {
                         continue;
                       }
-                      logger.info(
-                          "No thread is working and no more URLs are in queue waiting for another 10 seconds to make " +
-                          "sure...");
-                      sleep(10);
+                      logger.debug(
+                              "No thread is working and no more URLs are in queue waiting for another {} seconds to make " +
+                                      "sure...", SLEEP_TIME);
+                      sleep(SLEEP_TIME);
                       queueLength = frontier.getQueueLength();
                       if (queueLength > 0) {
                         continue;
@@ -300,8 +292,8 @@ public class CrawlController extends Configurable {
                       crawlersLocalData.add(crawler.getMyLocalData());
                     }
 
-                    logger.info("Waiting for 10 seconds before final clean up...");
-                    sleep(10);
+                    logger.debug("Waiting for {} seconds before final clean up...", SLEEP_TIME);
+                    sleep(SLEEP_TIME);
 
                     frontier.close();
                     docIdServer.close();
