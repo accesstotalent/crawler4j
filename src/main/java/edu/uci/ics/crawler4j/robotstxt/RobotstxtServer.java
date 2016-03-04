@@ -17,25 +17,20 @@
 
 package edu.uci.ics.crawler4j.robotstxt;
 
-import java.net.MalformedURLException;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.http.HttpStatus;
-import org.apache.http.NoHttpResponseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.exceptions.PageBiggerThanMaxSizeException;
 import edu.uci.ics.crawler4j.fetcher.PageFetchResult;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.url.WebURL;
 import edu.uci.ics.crawler4j.util.Util;
+import org.apache.http.HttpStatus;
+import org.apache.http.NoHttpResponseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Yasser Ganjisaffar
@@ -123,9 +118,9 @@ public class RobotstxtServer {
     } catch (SocketException | UnknownHostException | SocketTimeoutException | NoHttpResponseException se) {
       // No logging here, as it just means that robots.txt doesn't exist on this server which is perfectly ok
     } catch (PageBiggerThanMaxSizeException pbtms) {
-      logger.error("Error occurred while fetching (robots) url: {}, {}", robotsTxtUrl.getURL(), pbtms.getMessage());
+      logger.debug("Error occurred while fetching (robots) url: {}, {}", robotsTxtUrl.getURL(), pbtms.getMessage());
     } catch (Exception e) {
-      logger.error("Error occurred while fetching (robots) url: " + robotsTxtUrl.getURL(), e);
+      logger.debug("Error occurred while fetching (robots) url: " + robotsTxtUrl.getURL(), e);
     } finally {
       if (fetchResult != null) {
         fetchResult.discardContentIfNotConsumed();

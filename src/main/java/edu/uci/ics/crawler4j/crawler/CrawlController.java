@@ -111,7 +111,7 @@ public class CrawlController extends Configurable {
 
     if (!resumable) {
       IO.deleteFolderContents(envHome);
-      logger.info("Deleted contents of: " + envHome + " ( as you have configured resumable crawling to false )");
+      logger.debug("Deleted contents of: " + envHome + " ( as you have configured resumable crawling to false )");
     }
 
     env = new Environment(envHome, envConfig);
@@ -284,7 +284,7 @@ public class CrawlController extends Configurable {
                       }
                     }
 
-                    logger.info("All of the crawlers are stopped. Finishing the process...");
+                    logger.debug("All of the crawlers are stopped. Finishing the process...");
                     // At this step, frontier notifies the threads that were waiting for new URLs and they should stop
                     frontier.finish();
                     for (T crawler : crawlers) {
